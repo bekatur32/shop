@@ -9,7 +9,6 @@ class StoreAdmin(admin.ModelAdmin):
         'founder',
         'wallet',
         'register_date',
-
     )
     list_filter = (
         'register_date',

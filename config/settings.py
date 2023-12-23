@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 """
 Django settings for config project.
 
@@ -37,13 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_product',
-    'app_order',
-    'app_store',
-    'app_like',
-    'app_comment',
-    'app_bookmark',
-    'app_account'
+
+    # Third Party Apps
+    'rest_framework',
+    'django_celery_beat',
+    'drf_yasg',
+
+    # Local Apps
+    'app_account.apps.AppAccountConfig',
+    'app_store.apps.AppStoreConfig',
+    'app_product.apps.AppProductConfig',
+    'app_order.apps.AppOrderConfig',
+    'app_bookmark.apps.AppBookmarkConfig',
+    'app_like.apps.AppLikeConfig',
+    'app_comment.apps.AppCommentConfig',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +70,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'template'],
+        'DIRS': [BASE_DIR / 'templates']
+        ,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,21 +85,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -106,13 +101,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -120,17 +111,57 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "static"
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Active User
+AUTH_USER_MODEL = 'app_account.User'
+
+# Toman
+MIN_CHECKOUT = 10000
+MAX_CHECKOUT = 100000
+
+# Length of Bank Number
+BANK_NUMBER_LENGTH = 16
+
+# Time For Expire SMS
+TIME_EXPIRE = 150
+
+# Send SMS
+
+# Redis Config
+
+# Redis DB Numbers
+PHONE_REGISTER_DB = 1
+FORGET_PASSWORD_DB = 2
+
+
+
+# Rest Framework Config
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# JWT Config
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=14),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'UPDATE_LAST_LOGIN': True,
+}
+
+# Confog For Authorization in Swagger
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+        }
+    },
+}
